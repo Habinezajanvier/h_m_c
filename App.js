@@ -10,6 +10,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getScreen } from './redux/actions';
+import db from './services/db';
 
 const Tab = createBottomTabNavigator();
 
@@ -60,7 +61,7 @@ function MyTabs() {
     );
   } else {
     return (
-      <View>
+      <View style={styles.container}>
         <Text>Loading</Text>
       </View>
     );

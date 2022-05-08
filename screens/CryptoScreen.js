@@ -1,6 +1,6 @@
 import React from 'react';
 import CryptoJS from 'crypto-js';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   View,
   FlatList,
@@ -10,55 +10,30 @@ import {
 import { primeNumbers } from '../utils';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { changeScreen } from '../redux/actions';
+import {
+  changeScreen,
+  getHashes,
+  saveHashes,
+} from '../redux/actions';
 
 const CryoptoScreen = () => {
   const dispatch = useDispatch();
   const [hashes, setHashes] = React.useState([]);
-  primeNumbers(10000);
+  const { hashes: newHashes } = useSelector(
+    (state) => state.hashes
+  );
 
-  const hashedText = (text) =>
-    CryptoJS.SHA512(text, 'secretKey 123').toString();
-
-  const loadDbData = async () => {
-    try {
-      const data = await AsyncStorage.getItem('hashes');
-      if (data && data !== undefined)
-        return JSON.parse(data);
-    } catch (error) {
-      // print the error
-    }
-  };
-
-  const produceHashes = async () => {
-    try {
-      const newHashes = primeNumbers(10).map((item) => ({
-        item,
-        hash: hashedText(String(item)),
-      }));
-      await AsyncStorage.setItem(
-        'hashes',
-        JSON.stringify(newHashes)
-      );
-      return newHashes;
-    } catch (error) {
-      // print the error
-    }
-  };
   React.useEffect(() => {
     dispatch(changeScreen('Cryptos'));
-    (async () => {
-      try {
-        let data = await loadDbData();
-        if (!data) {
-          data = await produceHashes();
-        }
-        setHashes([...data]);
-      } catch (error) {
-        // print the error
-      }
-    })();
+    newHashes.length
+      ? dispatch(getHashes())
+      : dispatch(saveHashes());
+    setHashes([...newHashes]);
   }, []);
+
+  React.useEffect(() => {
+    setHashes([...newHashes]);
+  }, [newHashes]);
   return (
     <View>
       <FlatList

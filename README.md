@@ -4,6 +4,7 @@
 
 - React-native with expo
 - Redux
+- SQLite
 
 ## Pre-requisites
 

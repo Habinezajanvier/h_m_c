@@ -52,11 +52,3 @@ export const saveHashes = () => (dispatch) => {
     );
   });
 };
-
-db.transaction((tx) => {
-  tx.executeSql(
-    'DELETE * FROM hashes',
-    [],
-    (txObj, resultSet) => {}
-  );
-});
